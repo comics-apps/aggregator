@@ -1,4 +1,5 @@
 import Document, { Head, Main, NextScript } from 'next/document'
+import { Grid } from 'react-bootstrap'
 
 export default class MyDocument extends Document {
   render() {
@@ -8,9 +9,9 @@ export default class MyDocument extends Document {
           <link rel="stylesheet" href="/_next/static/style.css" />
         </Head>
         <body>
-          <div className="container">
+          <Grid>
             <Main />
-          </div>
+          </Grid>
           <NextScript />
         </body>
       </html>
