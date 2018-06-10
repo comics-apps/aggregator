@@ -1,7 +1,7 @@
 $icon-font-path: "../node_modules/bootstrap-sass/assets/fonts/bootstrap/";
 @import '../node_modules/bootstrap-sass/assets/stylesheets/_bootstrap';
 
-$font-size: 50px;
-p {
-  font-size: $font-size;
-}
+$fa-font-path: "../node_modules/font-awesome/fonts";
+@import '../node_modules/font-awesome/scss/font-awesome';
+
+@import '../node_modules/bootstrap-social/bootstrap-social';
