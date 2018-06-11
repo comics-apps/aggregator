@@ -1,7 +1,8 @@
 import React from 'react';
-import { withRouter } from 'next/router'
+import { withRouter } from 'next/router';
 
-import {logout, redirectIfLogged} from "../lib/auth";
+import Layout from '../layouts/application';
+import {redirectIfLogged} from '../lib/auth';
 
 import  '../css/styles.scss';
 
@@ -10,21 +11,11 @@ class HomePage extends React.Component {
     redirectIfLogged(this.props);
   }
 
-  signOut = () => {
-    logout();
-    this.props.router.push('/sign_in');
-  };
-
   render() {
     return (
-      <div>
-        <p>Hello World!</p>
-
-        <a
-          className="btn btn-primary"
-          onClick={this.signOut}
-        >Sign Out</a>
-      </div>
+      <Layout {...this.props}>
+        <h1 className="page-header">Dashboard</h1>
+      </Layout>
     )
   }
 }
