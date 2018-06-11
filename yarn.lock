@@ -584,6 +584,12 @@
     lodash "^4.2.0"
     to-fast-properties "^2.0.0"
 
+"@types/react@*":
+  version "16.3.17"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-16.3.17.tgz#d59d1a632570b0713946ed9c2949d994773633c5"
+  dependencies:
+    csstype "^2.2.0"
+
 "@zeit/next-css@0.2.0":
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/@zeit/next-css/-/next-css-0.2.0.tgz#35da071256397b509b86ac7726ce0f7d3593e62b"
@@ -1570,6 +1576,10 @@ csso@~2.3.1:
   dependencies:
     clap "^1.0.9"
     source-map "^0.5.3"
+
+csstype@^2.2.0:
+  version "2.5.3"
+  resolved "https://registry.yarnpkg.com/csstype/-/csstype-2.5.3.tgz#2504152e6e1cc59b32098b7f5d6a63f16294c1f7"
 
 currently-unhandled@^0.4.1:
   version "0.4.1"
@@ -4332,6 +4342,13 @@ react-dom@^16.4.0:
     fbjs "^0.8.16"
     loose-envify "^1.1.0"
     object-assign "^4.1.1"
+    prop-types "^15.6.0"
+
+react-google-login@^3.2.1:
+  version "3.2.1"
+  resolved "https://registry.yarnpkg.com/react-google-login/-/react-google-login-3.2.1.tgz#9ab6ac3694d0e6e2974f1e588c53cf7b903a36e6"
+  dependencies:
+    "@types/react" "*"
     prop-types "^15.6.0"
 
 react-hot-loader@4.1.3:

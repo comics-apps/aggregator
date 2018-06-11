@@ -1,14 +1,32 @@
-import "../css/styles.scss"
+import React from 'react';
+import { withRouter } from 'next/router'
 
-export default () => (
-  <div>
-    <p>Hello World!</p>
+import {logout, redirectIfLogged} from "../lib/auth";
 
-    <div className="text-center">
-      <a class="btn btn-social btn-google">
-        <span class="fa fa-google"></span>
-        Sign in with Google
-      </a>
-    </div>
-  </div>
-)
+import  '../css/styles.scss';
+
+class HomePage extends React.Component {
+  componentDidMount() {
+    redirectIfLogged(this.props);
+  }
+
+  signOut = () => {
+    logout();
+    this.props.router.push('/sign_in');
+  };
+
+  render() {
+    return (
+      <div>
+        <p>Hello World!</p>
+
+        <a
+          className="btn btn-primary"
+          onClick={this.signOut}
+        >Sign Out</a>
+      </div>
+    )
+  }
+}
+
+export default withRouter(HomePage)
