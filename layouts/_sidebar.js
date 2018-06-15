@@ -1,11 +1,15 @@
-import { Nav, NavItem } from 'react-bootstrap';
+import Link from 'next/link'
+import { Nav } from 'react-bootstrap';
 
 export default () => {
   return (
     <Nav className="nav-sidebar">
-      <NavItem eventKey={1} href="/">
-        Dashboard
-      </NavItem>
+      <li>
+        <Link href="/">Dashboard</Link>
+      </li>
+      <li>
+        <Link href="/aggregation">Aggregation</Link>
+      </li>
     </Nav>
   );
 };
