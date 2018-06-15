@@ -1,15 +1,14 @@
 import Link from 'next/link'
-import { Nav } from 'react-bootstrap';
 
 export default () => {
   return (
-    <Nav className="nav-sidebar">
+    <ul className="nav-sidebar nav">
       <li>
-        <Link href="/">Dashboard</Link>
+        <Link href="/"><a>Dashboard</a></Link>
       </li>
       <li>
-        <Link href="/aggregation">Aggregation</Link>
+        <Link href="/aggregation"><a>Aggregation</a></Link>
       </li>
-    </Nav>
+    </ul>
   );
 };
