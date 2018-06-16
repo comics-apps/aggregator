@@ -4,13 +4,10 @@ import { FormGroup, Button } from 'react-bootstrap';
 const SearchBox = ({
   searchQuery,
   handleSearchQueryChange,
-  handleSearchCVClick,
+  handleSearchClick,
   cvCssClass,
-  handleSearchGCDClick,
   gcdCssClass,
-  handleSearchCDBClick,
   cdbCssClass,
-  handleSearchMClick,
   mCssClass
 }) => {
   return <div>
@@ -20,19 +17,19 @@ const SearchBox = ({
     </FormGroup>
 
     <div className="btn-group">
-      <Button type="submit" title="Search Comic Vine" onClick={handleSearchCVClick}>
+      <Button type="submit" title="Search Comic Vine" onClick={() => { handleSearchClick('cv') }}>
         <i className={"fa fa-" + cvCssClass}></i>&nbsp;
         CV
       </Button>
-      <Button type="submit" title="Search Grand Comics Database" onClick={handleSearchGCDClick}>
+      <Button type="submit" title="Search Grand Comics Database" onClick={() => { handleSearchClick('gcd') }}>
         <i className={"fa fa-" + gcdCssClass}></i>&nbsp;
         GCD
       </Button>
-      <Button type="submit" title="Search Comicbook DB" onClick={handleSearchCDBClick}>
+      <Button type="submit" title="Search Comicbook DB" onClick={() => { handleSearchClick('cdb') }}>
         <i className={"fa fa-" + cdbCssClass}></i>&nbsp;
         CDB
       </Button>
-      <Button type="submit" title="Search Marvel" onClick={handleSearchMClick}>
+      <Button type="submit" title="Search Marvel" onClick={() => { handleSearchClick('m') }}>
         <i className={"fa fa-" + mCssClass}></i>&nbsp;
         M
       </Button>

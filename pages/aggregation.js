@@ -5,6 +5,7 @@ import isBlank from 'is-blank';
 
 import Layout from '../layouts/application';
 import {redirectIfLogged} from '../lib/auth';
+import {serviceName} from '../lib/services'
 
 import  '../css/styles.scss';
 import SearchBox from '../components/searchBox';
@@ -22,13 +23,12 @@ class AggregationPage extends React.Component {
       gcdCssClass: 'search',
       cdbCssClass: 'search',
       mCssClass: 'search',
+      service: null
     };
 
     this.handleSearchQueryChange = this.handleSearchQueryChange.bind(this);
-    this.handleSearchCVClick = this.handleSearchCVClick.bind(this);
-    this.handleSearchGCDClick = this.handleSearchGCDClick.bind(this);
-    this.handleSearchCDBClick = this.handleSearchCDBClick.bind(this);
-    this.handleSearchMClick = this.handleSearchMClick.bind(this)
+    this.handleSearchClick = this.handleSearchClick.bind(this);
+    this.handleStartAggregation = this.handleStartAggregation.bind(this);
   }
 
   componentDidMount() {
@@ -39,48 +39,19 @@ class AggregationPage extends React.Component {
     this.setState({ searchQuery: event.target.value })
   };
 
-  handleSearchCVClick = () => {
+  handleSearchClick = (service) => {
     if(isBlank(this.state.searchQuery)) return;
-    this.setState({ cvCssClass: 'spinner fa-spin' });
+    let newState = {};
+    newState[service + 'CssClass'] = 'spinner fa-spin';
+    this.setState(newState);
 
-    fetch(process.env.API_URL + '/cv/series?q=' + this.state.searchQuery )
+    fetch(process.env.API_URL + '/' + service + '/series?q=' + this.state.searchQuery)
       .then(res => res.json())
-      .then(json =>
-        this.setState({ cvCssClass: 'search', source: 'Comic Vine', series: json })
-      );
-  };
-
-  handleSearchGCDClick = () => {
-    if(isBlank(this.state.searchQuery)) return;
-    this.setState({ gcdCssClass: 'spinner fa-spin' });
-
-    fetch(process.env.API_URL + '/gcd/series?q=' + this.state.searchQuery )
-      .then(res => res.json())
-      .then(json =>
-        this.setState({ gcdCssClass: 'search', source: 'Grand Comics Database', series: json })
-      );
-  };
-
-  handleSearchCDBClick = () => {
-    if(isBlank(this.state.searchQuery)) return;
-    this.setState({ cdbCssClass: 'spinner fa-spin' });
-
-    fetch(process.env.API_URL + '/cdb/series?q=' + this.state.searchQuery )
-      .then(res => res.json())
-      .then(json =>
-        this.setState({ cdbCssClass: 'search', source: 'Comicbook DB', series: json })
-      );
-  };
-
-  handleSearchMClick = () => {
-    if(isBlank(this.state.searchQuery)) return;
-    this.setState({ mCssClass: 'spinner fa-spin' });
-
-    fetch(process.env.API_URL + '/m/series?q=' + this.state.searchQuery )
-      .then(res => res.json())
-      .then(json =>
-        this.setState({ mCssClass: 'search', source: 'Marvel', series: json })
-      );
+      .then(json => {
+        let newState = {series: json, source: serviceName(service)};
+        newState[service + 'CssClass'] = 'search';
+        this.setState(newState)
+      });
   };
 
   render() {
@@ -90,13 +61,10 @@ class AggregationPage extends React.Component {
         <SearchBox
           searchQuery={this.state.searchQuery}
           handleSearchQueryChange={this.handleSearchQueryChange}
-          handleSearchCVClick={this.handleSearchCVClick}
+          handleSearchClick={this.handleSearchClick}
           cvCssClass={this.state.cvCssClass}
-          handleSearchGCDClick={this.handleSearchGCDClick}
           gcdCssClass={this.state.gcdCssClass}
-          handleSearchCDBClick={this.handleSearchCDBClick}
           cdbCssClass={this.state.cdbCssClass}
-          handleSearchMClick={this.handleSearchMClick}
           mCssClass={this.state.mCssClass}
         />
         <hr/>
