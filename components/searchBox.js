@@ -1,33 +1,42 @@
 import { FormGroup, Button } from 'react-bootstrap';
 
 
-class SearchBox extends React.Component {
-  render() {
-    return <div>
-      <FormGroup>
-        <label className="control-label">Series name</label>
-        <input className="form-control" type="text" value={this.props.searchQuery} onChange={this.props.handleSearchQueryChange} />
-      </FormGroup>
+const SearchBox = ({
+  searchQuery,
+  handleSearchQueryChange,
+  handleSearchCVClick,
+  cvCssClass,
+  handleSearchGCDClick,
+  gcdCssClass,
+  handleSearchCDBClick,
+  cdbCssClass,
+  handleSearchMClick,
+  mCssClass
+}) => {
+  return <div>
+    <FormGroup>
+      <label className="control-label">Series name</label>
+      <input className="form-control" type="text" value={searchQuery} onChange={handleSearchQueryChange} />
+    </FormGroup>
 
-      <div className="btn-group">
-        <Button type="submit" title="Search Comic Vine" onClick={this.props.handleSearchCVClick}>
-          <i className="fa fa-search"></i>&nbsp;
-          CV
-        </Button>
-        <Button type="submit" title="Search Grand Comics Database" onClick={this.props.handleSearchGCDClick}>
-          <i className="fa fa-search"></i>&nbsp;
-          GCD
-        </Button>
-        <Button type="submit" title="Search Comic Book DB" onClick={this.props.handleSearchCBDBClick}>
-          <i className="fa fa-search"></i>&nbsp;
-          CBDB
-        </Button>
-        <Button type="submit" title="Search Marvel" onClick={this.props.handleSearchMClick}>
-          <i className="fa fa-search"></i>&nbsp;
-          M
-        </Button>
-      </div>
-    </div>;
-  }
-}
+    <div className="btn-group">
+      <Button type="submit" title="Search Comic Vine" onClick={handleSearchCVClick}>
+        <i className={"fa fa-" + cvCssClass}></i>&nbsp;
+        CV
+      </Button>
+      <Button type="submit" title="Search Grand Comics Database" onClick={handleSearchGCDClick}>
+        <i className={"fa fa-" + gcdCssClass}></i>&nbsp;
+        GCD
+      </Button>
+      <Button type="submit" title="Search Comicbook DB" onClick={handleSearchCDBClick}>
+        <i className={"fa fa-" + cdbCssClass}></i>&nbsp;
+        CDB
+      </Button>
+      <Button type="submit" title="Search Marvel" onClick={handleSearchMClick}>
+        <i className={"fa fa-" + mCssClass}></i>&nbsp;
+        M
+      </Button>
+    </div>
+  </div>;
+};
 export default SearchBox;
