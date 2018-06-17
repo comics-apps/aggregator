@@ -6,6 +6,7 @@ const SeriesList = ({
     <table className="table table-striped">
       <thead>
       <tr>
+        <th>Publisher</th>
         <th>Name</th>
         <th>Start Year</th>
         <th>Action</th>
@@ -14,6 +15,7 @@ const SeriesList = ({
       <tbody>
       {series.map((s) =>
         <tr key={s.id}>
+          <td>{s.publisher.name}</td>
           <td>
             <a href={s.external_url} target="_blank">{s.name}</a>
           </td>
