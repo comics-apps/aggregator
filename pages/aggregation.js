@@ -9,6 +9,8 @@ import {serviceName} from '../lib/services'
 
 import  '../css/styles.scss';
 import SearchBox from '../components/searchBox';
+import SeriesList from '../components/seriesList';
+import SeriesWithIssues from '../components/seriesWithIssues';
 
 class AggregationPage extends React.Component {
   constructor(props) {
@@ -82,60 +84,16 @@ class AggregationPage extends React.Component {
           <div>
             <h3>{this.state.source}</h3>
             {this.state.step === 'series' &&
-            <table className="table table-striped">
-              <thead>
-              <tr>
-                <th>Name</th>
-                <th>Start Year</th>
-                <th>Action</th>
-              </tr>
-              </thead>
-              <tbody>
-              {this.state.series.map((s) =>
-                <tr key={s.id}>
-                  <td>
-                    <a href={s.external_url} target="_blank">{s.name}</a>
-                  </td>
-                  <td>{s.start_year}</td>
-                  <td>
-                    <button
-                      className="btn btn-primary"
-                      onClick={() => this.handleStartAggregation(s.id)}
-                    >
-                      Aggregate
-                    </button>
-                  </td>
-                </tr>
-              )}
-              </tbody>
-            </table>
+              <SeriesList
+                series={this.state.series}
+                handleStartAggregation={this.handleStartAggregation}
+              />
             }
             {this.state.step === 'aggregation' &&
-              <div>
-                <h4><u>{this.state.resource.name} ({this.state.resource.start_year})</u></h4>
-                <table className="table table-striped">
-                  <thead>
-                  <tr>
-                    <th width="1">Service</th>
-                    <th width="1">Number</th>
-                    <th>Name</th>
-                  </tr>
-                  </thead>
-                  <tbody>
-                  {this.state.resource.issues.map((i) =>
-                    <tr key={i.id}>
-                      <td align="center">
-                        <img src={'static/' + this.state.service + '.gif'} />
-                      </td>
-                      <td>{i.number}</td>
-                      <td>
-                        <a href={i.external_url} target="_blank">{i.name}</a>
-                      </td>
-                    </tr>
-                  )}
-                  </tbody>
-                </table>
-              </div>
+              <SeriesWithIssues
+                resource={this.state.resource}
+                service={this.state.service}
+              />
             }
           </div>
         }
@@ -144,4 +102,4 @@ class AggregationPage extends React.Component {
   }
 }
 
-export default withRouter(AggregationPage)
+export default withRouter(AggregationPage);
