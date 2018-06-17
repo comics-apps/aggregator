@@ -23,7 +23,9 @@ class AggregationPage extends React.Component {
       gcdCssClass: 'search',
       cdbCssClass: 'search',
       mCssClass: 'search',
-      service: null
+      service: null,
+      step: 'init',
+      resource: null,
     };
 
     this.handleSearchQueryChange = this.handleSearchQueryChange.bind(this);
@@ -48,9 +50,17 @@ class AggregationPage extends React.Component {
     fetch(process.env.API_URL + '/' + service + '/series?q=' + this.state.searchQuery)
       .then(res => res.json())
       .then(json => {
-        let newState = {series: json, source: serviceName(service)};
+        let newState = {series: json, source: serviceName(service), service: service, step: 'series'};
         newState[service + 'CssClass'] = 'search';
         this.setState(newState)
+      });
+  };
+
+  handleStartAggregation = (seriesId) => {
+    fetch(process.env.API_URL + '/' + this.state.service + '/series/' + seriesId)
+      .then(res => res.json())
+      .then(json => {
+        this.setState({ resource: json, step: 'aggregation' })
       });
   };
 
@@ -68,31 +78,65 @@ class AggregationPage extends React.Component {
           mCssClass={this.state.mCssClass}
         />
         <hr/>
-        {this.state.source &&
+        {this.state.step !== 'init' &&
           <div>
             <h3>{this.state.source}</h3>
+            {this.state.step === 'series' &&
             <table className="table table-striped">
               <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Start Year</th>
-                  <th>Action</th>
-                </tr>
+              <tr>
+                <th>Name</th>
+                <th>Start Year</th>
+                <th>Action</th>
+              </tr>
               </thead>
               <tbody>
-                {this.state.series.map((s) =>
-                  <tr key={s.id}>
-                    <td>
-                      <a href={s.external_url} target="_blank">{s.name}</a>
-                    </td>
-                    <td>{s.start_year}</td>
-                    <td>
-                      <div className="btn btn-primary">Aggregate</div>
-                    </td>
-                  </tr>
-                )}
+              {this.state.series.map((s) =>
+                <tr key={s.id}>
+                  <td>
+                    <a href={s.external_url} target="_blank">{s.name}</a>
+                  </td>
+                  <td>{s.start_year}</td>
+                  <td>
+                    <button
+                      className="btn btn-primary"
+                      onClick={() => this.handleStartAggregation(s.id)}
+                    >
+                      Aggregate
+                    </button>
+                  </td>
+                </tr>
+              )}
               </tbody>
             </table>
+            }
+            {this.state.step === 'aggregation' &&
+              <div>
+                <h4><u>{this.state.resource.name} ({this.state.resource.start_year})</u></h4>
+                <table className="table table-striped">
+                  <thead>
+                  <tr>
+                    <th width="1">Service</th>
+                    <th width="1">Number</th>
+                    <th>Name</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  {this.state.resource.issues.map((i) =>
+                    <tr key={i.id}>
+                      <td align="center">
+                        <img src={'static/' + this.state.service + '.gif'} />
+                      </td>
+                      <td>{i.number}</td>
+                      <td>
+                        <a href={i.external_url} target="_blank">{i.name}</a>
+                      </td>
+                    </tr>
+                  )}
+                  </tbody>
+                </table>
+              </div>
+            }
           </div>
         }
       </Layout>
