@@ -21,6 +21,7 @@ class AggregationPage extends React.Component {
       searchQuery: '',
       source: null,
       series: [],
+      series2: [],
       cvCssClass: 'search',
       gcdCssClass: 'search',
       cdbCssClass: 'search',
@@ -28,11 +29,13 @@ class AggregationPage extends React.Component {
       service: null,
       step: 'init',
       resource: null,
+      resource2: null
     };
 
     this.handleSearchQueryChange = this.handleSearchQueryChange.bind(this);
     this.handleSearchClick = this.handleSearchClick.bind(this);
     this.handleStartAggregation = this.handleStartAggregation.bind(this);
+    this.handleContinueAggregation = this.handleContinueAggregation.bind(this);
   }
 
   componentDidMount() {
@@ -43,7 +46,7 @@ class AggregationPage extends React.Component {
     this.setState({ searchQuery: event.target.value })
   };
 
-  handleSearchClick = (service) => {
+  handleSearchClick = (service, column) => {
     if(isBlank(this.state.searchQuery)) return;
     let newState = {};
     newState[service + 'CssClass'] = 'spinner fa-spin';
@@ -52,7 +55,13 @@ class AggregationPage extends React.Component {
     fetch(process.env.API_URL + '/' + service + '/series?q=' + this.state.searchQuery)
       .then(res => res.json())
       .then(json => {
-        let newState = {series: json, source: serviceName(service), service: service, step: 'series'};
+        let newState = {};
+        if(column === 1) {
+          newState = { series: json, source: serviceName(service), step: 'series', service: service }
+        } else if (column === 2) {
+          newState = { resource2: null, series2: json, source2: serviceName(service), service2: service }
+        }
+
         newState[service + 'CssClass'] = 'search';
         this.setState(newState)
       });
@@ -66,11 +75,20 @@ class AggregationPage extends React.Component {
       });
   };
 
+  handleContinueAggregation = (seriesId) => {
+    fetch(process.env.API_URL + '/' + this.state.service2 + '/series/' + seriesId)
+      .then(res => res.json())
+      .then(json => {
+        this.setState({ resource2: json })
+      });
+  };
+
   render() {
     return (
       <Layout {...this.props}>
         <h1 className="page-header">Aggregation</h1>
         <SearchBox
+          step={this.state.step}
           searchQuery={this.state.searchQuery}
           handleSearchQueryChange={this.handleSearchQueryChange}
           handleSearchClick={this.handleSearchClick}
@@ -82,18 +100,40 @@ class AggregationPage extends React.Component {
         <hr/>
         {this.state.step !== 'init' &&
           <div>
-            <h3>{this.state.source}</h3>
             {this.state.step === 'series' &&
-              <SeriesList
-                series={this.state.series}
-                handleStartAggregation={this.handleStartAggregation}
-              />
+              <div>
+                <h3>{this.state.source}</h3>
+                <SeriesList
+                  series={this.state.series}
+                  handleAggregation={this.handleStartAggregation}
+                />
+              </div>
             }
             {this.state.step === 'aggregation' &&
-              <SeriesWithIssues
-                resource={this.state.resource}
-                service={this.state.service}
-              />
+              <div className="row">
+                <div className="col-xs-6">
+                  <h3>{this.state.source}</h3>
+                  <SeriesWithIssues
+                    resource={this.state.resource}
+                    column={1}
+                  />
+                </div>
+                <div className="col-xs-6">
+                  <h3>{this.state.source2}</h3>
+                  {this.state.resource2 === null &&
+                    <SeriesList
+                      series={this.state.series2}
+                      handleAggregation={this.handleContinueAggregation}
+                    />
+                  }
+                  {this.state.resource2 !== null &&
+                  <SeriesWithIssues
+                    resource={this.state.resource2}
+                    column={2}
+                  />
+                  }
+                </div>
+              </div>
             }
           </div>
         }

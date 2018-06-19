@@ -1,6 +1,6 @@
 const SeriesList = ({
   series,
-  handleStartAggregation
+  handleAggregation
 }) => {
   return <div>
     <table className="table table-striped">
@@ -23,7 +23,7 @@ const SeriesList = ({
           <td>
             <button
               className="btn btn-primary"
-              onClick={() => handleStartAggregation(s.id)}
+              onClick={() => handleAggregation(s.id)}
             >
               Aggregate
             </button>
