@@ -29,13 +29,18 @@ class AggregationPage extends React.Component {
       service: null,
       step: 'init',
       resource: null,
-      resource2: null
+      resource2: null,
+      markedIssue1: null,
+      markedIssue2: null,
+      aggregated: {}
     };
 
     this.handleSearchQueryChange = this.handleSearchQueryChange.bind(this);
     this.handleSearchClick = this.handleSearchClick.bind(this);
     this.handleStartAggregation = this.handleStartAggregation.bind(this);
     this.handleContinueAggregation = this.handleContinueAggregation.bind(this);
+    this.markToConnect = this.markToConnect.bind(this);
+    this.connect = this.connect.bind(this);
   }
 
   componentDidMount() {
@@ -57,9 +62,9 @@ class AggregationPage extends React.Component {
       .then(json => {
         let newState = {};
         if(column === 1) {
-          newState = { series: json, source: serviceName(service), step: 'series', service: service }
+          newState = { series: json, source: serviceName(service), step: 'series', service: service, markedIssue1: null }
         } else if (column === 2) {
-          newState = { resource2: null, series2: json, source2: serviceName(service), service2: service }
+          newState = { resource2: null, series2: json, source2: serviceName(service), service2: service, markedIssue2: null }
         }
 
         newState[service + 'CssClass'] = 'search';
@@ -81,6 +86,28 @@ class AggregationPage extends React.Component {
       .then(json => {
         this.setState({ resource2: json })
       });
+  };
+
+  markToConnect = (resource, issue, column) => {
+    let newState = {};
+    newState['markedIssue' + column] = {
+      series_name: resource.name,
+      start_year: resource.start_year,
+      service: resource.service,
+      ...issue
+    };
+    this.setState(newState);
+  };
+
+  connect = () => {
+    const key = this.state.markedIssue1.id;
+    let aggregated = this.state.aggregated;
+    if(aggregated[key]) {
+      aggregated[key].push(this.state.markedIssue2)
+    } else {
+      aggregated[key] = [this.state.markedIssue2]
+    }
+    this.setState({ aggregated: aggregated });
   };
 
   render() {
@@ -116,6 +143,11 @@ class AggregationPage extends React.Component {
                   <SeriesWithIssues
                     resource={this.state.resource}
                     column={1}
+                    markedIssue={this.state.markedIssue1}
+                    markToConnect={this.markToConnect}
+                    readyToConnect={this.state.markedIssue1 !== null && this.state.markedIssue2 !== null}
+                    connect={this.connect}
+                    aggregated={this.state.aggregated}
                   />
                 </div>
                 <div className="col-xs-6">
@@ -130,6 +162,11 @@ class AggregationPage extends React.Component {
                   <SeriesWithIssues
                     resource={this.state.resource2}
                     column={2}
+                    markedIssue={this.state.markedIssue2}
+                    markToConnect={this.markToConnect}
+                    readyToConnect={false}
+                    connect={null}
+                    aggregated={{}}
                   />
                   }
                 </div>
