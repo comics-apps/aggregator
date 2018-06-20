@@ -30,37 +30,36 @@ const SeriesWithIssues = ({
               </div>
             }
 
-            <div className="panel panel-default panel-issue">
-              <div className="panel-body">
-                <img src={'static/' + resource.service + '.gif'} />
-                <a href={i.external_url} target="_blank">
-                  {resource.name} ({resource.start_year}) #{i.number}
-                  {!isBlank(i.name) &&
-                  <span> - {i.name}</span>
-                  }
-                </a>
-              </div>
-            </div>
-
-            {column === 1 && aggregated[i.id] &&
+            <div className='pull-left'>
               <div>
-                {aggregated[i.id].map((issue) =>
-                  <div>
-                    <div className="panel panel-default panel-issue">
-                      <div className="panel-body">
-                        <img src={'static/' + issue.service + '.gif'} />
-                        <a href={issue.external_url} target="_blank">
-                          {issue.series_name} ({issue.start_year}) #{issue.number}
-                          {!isBlank(issue.name) &&
-                          <span> - {issue.name}</span>
-                          }
+                #{i.number}
+                {!isBlank(i.name) &&
+                <span> - {i.name}</span>
+                }
+              </div>
+
+              <div className="panel panel-default panel-issue" style={{marginRight: "4px"}}>
+                <div className="panel-body">
+                  <a href={i.external_url} target="_blank" title={resource.name + ' (' + resource.start_year + ') #' + i.number}>
+                    <img src={'static/' + resource.service + '.gif'} />
+                  </a>
+                </div>
+              </div>
+
+              {column === 1 && aggregated[i.id] &&
+                <div style={{display: 'inline-block'}}>
+                  {aggregated[i.id].map((issue) =>
+                    <div className="panel panel-default panel-issue" style={{marginRight: "4px"}}>
+                      <div className="panel-body text-center">
+                        <a href={issue.external_url} target="_blank" title={issue.series_name + ' (' + issue.start_year + ') #' + issue.number}>
+                          <img src={'static/' + issue.service + '.gif'} />
                         </a>
                       </div>
                     </div>
-                  </div>
-                )}
-              </div>
-            }
+                  )}
+                </div>
+              }
+            </div>
 
             {column === 1 &&
               <div className="pull-right" style={{display: 'block-inline'}}>
