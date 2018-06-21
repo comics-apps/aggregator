@@ -1,13 +1,13 @@
 import isBlank from 'is-blank';
 
-import {connectIconClassName} from '../lib/aggregation';
+import ServiceIcon from './serviceIcon';
+import {connectIconClassName, serviceIconPropsFromResource} from '../lib/aggregation';
 
 const SeriesWithIssues = ({
+  service,
   resource,
-  column,
   markedIssue,
   markToConnect,
-  readyToConnect,
   connect,
   aggregated
 }) => {
@@ -18,17 +18,24 @@ const SeriesWithIssues = ({
       {resource.issues.map((i) =>
         <tr key={i.id}>
           <td>
-            {column === 2 &&
-              <div className="pull-left">
-                <div
-                  className={ 'btn btn-' + connectIconClassName(i, markedIssue, readyToConnect) + ' btn-xs'}
-                  onClick={() => { markToConnect(resource, i, column) }}
-                >
-                  <i className="fa fa-puzzle-piece"></i>
-                </div>
-                &nbsp;
+            <div>
+              <div
+                className={ 'btn btn-default btn-xs'}
+                style={{marginRight: '4px'}}
+                onClick={connect}
+              >
+                <i className="fa fa-plug"></i>
               </div>
-            }
+              <div
+                className={ 'btn btn-' + connectIconClassName(i, markedIssue) + ' btn-xs'}
+                style={{marginRight: '4px'}}
+                onClick={() => { markToConnect(service, resource, i) }}
+              >
+                <i className="fa fa-puzzle-piece"></i>
+              </div>
+            </div>
+
+            <br/>
 
             <div className='pull-left'>
               <div>
@@ -38,49 +45,56 @@ const SeriesWithIssues = ({
                 }
               </div>
 
-              <div className="panel panel-default panel-issue" style={{marginRight: "4px"}}>
-                <div className="panel-body">
-                  <a href={i.external_url} target="_blank" title={resource.name + ' (' + resource.start_year + ') #' + i.number}>
-                    <img src={'static/' + resource.service + '.gif'} />
-                  </a>
-                </div>
-              </div>
-
-              {column === 1 && aggregated[i.id] &&
-                <div style={{display: 'inline-block'}}>
-                  {aggregated[i.id].map((issue) =>
-                    <div className="panel panel-default panel-issue" style={{marginRight: "4px"}}>
-                      <div className="panel-body text-center">
-                        <a href={issue.external_url} target="_blank" title={issue.series_name + ' (' + issue.start_year + ') #' + issue.number}>
-                          <img src={'static/' + issue.service + '.gif'} />
-                        </a>
-                      </div>
-                    </div>
-                  )}
+              {!aggregated[i.id] &&
+                <ServiceIcon
+                  externalUrl={i.external_url}
+                  seriesName={resource.name}
+                  seriesStartYear={resource.start_year}
+                  issueNumber={i.number}
+                  service={resource.service}
+                />
+              }
+              {aggregated[i.id] &&
+                <div>
+                  {aggregated[i.id].cvIssue &&
+                    <ServiceIcon
+                      externalUrl={aggregated[i.id].cvIssue.external_url}
+                      seriesName={aggregated[i.id].cvIssue.series_name}
+                      seriesStartYear={aggregated[i.id].cvIssue.start_year}
+                      issueNumber={aggregated[i.id].cvIssue.number}
+                      service={aggregated[i.id].cvIssue.service}
+                    />
+                  }
+                  {aggregated[i.id].gcdIssue &&
+                    <ServiceIcon
+                      externalUrl={aggregated[i.id].gcdIssue.external_url}
+                      seriesName={aggregated[i.id].gcdIssue.series_name}
+                      seriesStartYear={aggregated[i.id].gcdIssue.start_year}
+                      issueNumber={aggregated[i.id].gcdIssue.number}
+                      service={aggregated[i.id].gcdIssue.service}
+                    />
+                  }
+                  {aggregated[i.id].cdbIssue &&
+                    <ServiceIcon
+                      externalUrl={aggregated[i.id].cdbIssue.external_url}
+                      seriesName={aggregated[i.id].cdbIssue.series_name}
+                      seriesStartYear={aggregated[i.id].cdbIssue.start_year}
+                      issueNumber={aggregated[i.id].cdbIssue.number}
+                      service={aggregated[i.id].cdbIssue.service}
+                    />
+                  }
+                  {aggregated[i.id].mIssue &&
+                    <ServiceIcon
+                      externalUrl={aggregated[i.id].mIssue.external_url}
+                      seriesName={aggregated[i.id].mIssue.series_name}
+                      seriesStartYear={aggregated[i.id].mIssue.start_year}
+                      issueNumber={aggregated[i.id].mIssue.number}
+                      service={aggregated[i.id].mIssue.service}
+                    />
+                  }
                 </div>
               }
             </div>
-
-            {column === 1 &&
-              <div className="pull-right" style={{display: 'block-inline'}}>
-                {markedIssue && i.id === markedIssue.id && readyToConnect === true &&
-                    <div
-                      className={ 'btn btn-success btn-xs'}
-                      onClick={connect}
-                      style={{marginRight: '4px'}}
-                    >
-                      <i className="fa fa-plug"></i>
-                    </div>
-                }
-
-                <div
-                  className={ 'btn btn-' + connectIconClassName(i, markedIssue, readyToConnect) + ' btn-xs'}
-                  onClick={() => { markToConnect(resource, i, column) }}
-                >
-                  <i className="fa fa-puzzle-piece"></i>
-                </div>
-              </div>
-            }
           </td>
         </tr>
       )}

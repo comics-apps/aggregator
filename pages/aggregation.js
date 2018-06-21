@@ -5,7 +5,6 @@ import isBlank from 'is-blank';
 
 import Layout from '../layouts/application';
 import {redirectIfLogged} from '../lib/auth';
-import {serviceName} from '../lib/services'
 
 import  '../css/styles.scss';
 import SearchBox from '../components/searchBox';
@@ -19,26 +18,34 @@ class AggregationPage extends React.Component {
     this.state = {
       searching: false,
       searchQuery: '',
-      source: null,
-      series: [],
-      series2: [],
       cvCssClass: 'search',
+      cvSeries: null,
+      cvResource: null,
+      cvMarkedIssue: null,
+      cvAggregated: {},
       gcdCssClass: 'search',
+      gcdSeries: null,
+      gcdResource: null,
+      gcdMarkedIssue: null,
+      gcdAggregated: {},
       cdbCssClass: 'search',
+      cdbSeries: null,
+      cdbResource: null,
+      cdbMarkedIssue: null,
+      cdbAggregated: {},
       mCssClass: 'search',
+      mSeries: null,
+      mResource: null,
+      mMarkedIssue: null,
+      mAggregated: {},
       service: null,
       step: 'init',
-      resource: null,
-      resource2: null,
-      markedIssue1: null,
-      markedIssue2: null,
-      aggregated: {}
+      aggregatedSet: []
     };
 
     this.handleSearchQueryChange = this.handleSearchQueryChange.bind(this);
     this.handleSearchClick = this.handleSearchClick.bind(this);
-    this.handleStartAggregation = this.handleStartAggregation.bind(this);
-    this.handleContinueAggregation = this.handleContinueAggregation.bind(this);
+    this.selectSeries = this.selectSeries.bind(this);
     this.markToConnect = this.markToConnect.bind(this);
     this.connect = this.connect.bind(this);
   }
@@ -51,7 +58,7 @@ class AggregationPage extends React.Component {
     this.setState({ searchQuery: event.target.value })
   };
 
-  handleSearchClick = (service, column) => {
+  handleSearchClick = (service) => {
     if(isBlank(this.state.searchQuery)) return;
     let newState = {};
     newState[service + 'CssClass'] = 'spinner fa-spin';
@@ -61,36 +68,26 @@ class AggregationPage extends React.Component {
       .then(res => res.json())
       .then(json => {
         let newState = {};
-        if(column === 1) {
-          newState = { series: json, source: serviceName(service), step: 'series', service: service, markedIssue1: null }
-        } else if (column === 2) {
-          newState = { resource2: null, series2: json, source2: serviceName(service), service2: service, markedIssue2: null }
-        }
-
+        newState[service + 'Series'] = json;
         newState[service + 'CssClass'] = 'search';
         this.setState(newState)
       });
   };
 
-  handleStartAggregation = (seriesId) => {
-    fetch(process.env.API_URL + '/' + this.state.service + '/series/' + seriesId)
+  selectSeries = (service, seriesId) => {
+    fetch(process.env.API_URL + '/' + service + '/series/' + seriesId)
       .then(res => res.json())
       .then(json => {
-        this.setState({ resource: json, step: 'aggregation' })
+        let newState = {};
+        newState[service + 'Series'] = null;
+        newState[service + 'Resource'] = json;
+        this.setState(newState)
       });
   };
 
-  handleContinueAggregation = (seriesId) => {
-    fetch(process.env.API_URL + '/' + this.state.service2 + '/series/' + seriesId)
-      .then(res => res.json())
-      .then(json => {
-        this.setState({ resource2: json })
-      });
-  };
-
-  markToConnect = (resource, issue, column) => {
+  markToConnect = (service, resource, issue) => {
     let newState = {};
-    newState['markedIssue' + column] = {
+    newState[service + 'MarkedIssue'] = {
       series_name: resource.name,
       start_year: resource.start_year,
       service: resource.service,
@@ -100,14 +97,47 @@ class AggregationPage extends React.Component {
   };
 
   connect = () => {
-    const key = this.state.markedIssue1.id;
-    let aggregated = this.state.aggregated;
-    if(aggregated[key]) {
-      aggregated[key].push(this.state.markedIssue2)
-    } else {
-      aggregated[key] = [this.state.markedIssue2]
+    const el = {
+      cvIssue: this.state.cvMarkedIssue,
+      gcdIssue: this.state.gcdMarkedIssue,
+      cdbIssue: this.state.cdbMarkedIssue,
+      mIssue: this.state.mMarkedIssue
+    };
+
+    const aggregatedSet = this.state.aggregatedSet;
+    aggregatedSet.push(el);
+
+    const cvAggregated = this.state.cvAggregated;
+    if(el.cvIssue) {
+      cvAggregated[el.cvIssue.id] = el
     }
-    this.setState({ aggregated: aggregated });
+
+    const gcdAggregated = this.state.gcdAggregated;
+    if(el.gcdIssue) {
+      gcdAggregated[el.gcdIssue.id] = el
+    }
+
+    const cdbAggregated = this.state.cdbAggregated;
+    if(el.cdbIssue) {
+      cdbAggregated[el.cdbIssue.id] = el
+    }
+
+    const mAggregated = this.state.mAggregated;
+    if(el.mIssue) {
+      mAggregated[el.mIssue.id] = el
+    }
+
+    this.setState({
+      cvMarkedIssue: null,
+      gcdMarkedIssue: null,
+      cdbMarkedIssue: null,
+      mMarkedIssue: null,
+      aggregatedSet: aggregatedSet,
+      cvAggregated: cvAggregated,
+      gcdAggregated: gcdAggregated,
+      cdbAggregated: cdbAggregated,
+      mAggregated: mAggregated
+    });
   };
 
   render() {
@@ -115,7 +145,6 @@ class AggregationPage extends React.Component {
       <Layout {...this.props}>
         <h1 className="page-header">Aggregation</h1>
         <SearchBox
-          step={this.state.step}
           searchQuery={this.state.searchQuery}
           handleSearchQueryChange={this.handleSearchQueryChange}
           handleSearchClick={this.handleSearchClick}
@@ -125,55 +154,97 @@ class AggregationPage extends React.Component {
           mCssClass={this.state.mCssClass}
         />
         <hr/>
-        {this.state.step !== 'init' &&
-          <div>
-            {this.state.step === 'series' &&
-              <div>
-                <h3>{this.state.source}</h3>
-                <SeriesList
-                  series={this.state.series}
-                  handleAggregation={this.handleStartAggregation}
-                />
-              </div>
-            }
-            {this.state.step === 'aggregation' &&
-              <div className="row">
-                <div className="col-xs-6">
-                  <h3>{this.state.source}</h3>
+
+        <table className="table">
+          <thead>
+            <tr>
+              <th width="25%">Comic Vine</th>
+              <th width="25%">Grand Comics Database</th>
+              <th width="25%">ComicbookDB</th>
+              <th width="25%">Marvel</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td valign="top">
+                {this.state.cvSeries &&
+                  <SeriesList
+                    service='cv'
+                    series={this.state.cvSeries}
+                    selectSeries={this.selectSeries}
+                  />
+                }
+                {this.state.cvResource &&
                   <SeriesWithIssues
-                    resource={this.state.resource}
-                    column={1}
-                    markedIssue={this.state.markedIssue1}
+                    service='cv'
+                    resource={this.state.cvResource}
+                    markedIssue={this.state.cvMarkedIssue}
                     markToConnect={this.markToConnect}
-                    readyToConnect={this.state.markedIssue1 !== null && this.state.markedIssue2 !== null}
                     connect={this.connect}
-                    aggregated={this.state.aggregated}
+                    aggregated={this.state.cvAggregated}
                   />
-                </div>
-                <div className="col-xs-6">
-                  <h3>{this.state.source2}</h3>
-                  {this.state.resource2 === null &&
-                    <SeriesList
-                      series={this.state.series2}
-                      handleAggregation={this.handleContinueAggregation}
-                    />
-                  }
-                  {this.state.resource2 !== null &&
+                }
+              </td>
+              <td valign="top">
+                {this.state.gcdSeries &&
+                  <SeriesList
+                    service='gcd'
+                    series={this.state.gcdSeries}
+                    selectSeries={this.selectSeries}
+                  />
+                }
+                {this.state.gcdResource &&
                   <SeriesWithIssues
-                    resource={this.state.resource2}
-                    column={2}
-                    markedIssue={this.state.markedIssue2}
+                    service='gcd'
+                    resource={this.state.gcdResource}
+                    markedIssue={this.state.gcdMarkedIssue}
                     markToConnect={this.markToConnect}
-                    readyToConnect={false}
-                    connect={null}
-                    aggregated={{}}
+                    connect={this.connect}
+                    aggregated={this.state.gcdAggregated}
                   />
-                  }
-                </div>
-              </div>
-            }
-          </div>
-        }
+                }
+              </td>
+              <td valign="top">
+                {this.state.cdbSeries &&
+                  <SeriesList
+                    service='cdb'
+                    series={this.state.cdbSeries}
+                    selectSeries={this.selectSeries}
+                  />
+                }
+                {this.state.cdbResource &&
+                  <SeriesWithIssues
+                    service='cdb'
+                    resource={this.state.cdbResource}
+                    markedIssue={this.state.cdbMarkedIssue}
+                    markToConnect={this.markToConnect}
+                    connect={this.connect}
+                    aggregated={this.state.cdbAggregated}
+                  />
+                }
+              </td>
+              <td valign="top">
+                {this.state.mSeries &&
+                  <SeriesList
+                    service='m'
+                    series={this.state.mSeries}
+                    selectSeries={this.selectSeries}
+                  />
+                }
+                {this.state.mResource &&
+                  <SeriesWithIssues
+                    service='m'
+                    resource={this.state.mResource}
+                    markedIssue={this.state.mMarkedIssue}
+                    markToConnect={this.markToConnect}
+                    connect={this.connect}
+                    aggregated={this.state.mAggregated}
+                  />
+                }
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </Layout>
     )
   }
