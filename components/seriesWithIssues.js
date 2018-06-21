@@ -46,53 +46,23 @@ const SeriesWithIssues = ({
               </div>
 
               {!aggregated[i.id] &&
-                <ServiceIcon
-                  externalUrl={i.externalUrl}
-                  seriesName={resource.name}
-                  seriesStartYear={resource.startYear}
-                  issueNumber={i.number}
-                  service={resource.service}
-                />
+                <ServiceIcon seriesName={resource.name} {...resource} {...i} />
               }
               {aggregated[i.id] &&
-                <div>
-                  {aggregated[i.id].cvIssue &&
-                    <ServiceIcon
-                      externalUrl={aggregated[i.id].cvIssue.external_url}
-                      seriesName={aggregated[i.id].cvIssue.series_name}
-                      seriesStartYear={aggregated[i.id].cvIssue.start_year}
-                      issueNumber={aggregated[i.id].cvIssue.number}
-                      service={aggregated[i.id].cvIssue.service}
-                    />
-                  }
-                  {aggregated[i.id].gcdIssue &&
-                    <ServiceIcon
-                      externalUrl={aggregated[i.id].gcdIssue.external_url}
-                      seriesName={aggregated[i.id].gcdIssue.series_name}
-                      seriesStartYear={aggregated[i.id].gcdIssue.start_year}
-                      issueNumber={aggregated[i.id].gcdIssue.number}
-                      service={aggregated[i.id].gcdIssue.service}
-                    />
-                  }
-                  {aggregated[i.id].cdbIssue &&
-                    <ServiceIcon
-                      externalUrl={aggregated[i.id].cdbIssue.external_url}
-                      seriesName={aggregated[i.id].cdbIssue.series_name}
-                      seriesStartYear={aggregated[i.id].cdbIssue.start_year}
-                      issueNumber={aggregated[i.id].cdbIssue.number}
-                      service={aggregated[i.id].cdbIssue.service}
-                    />
-                  }
-                  {aggregated[i.id].mIssue &&
-                    <ServiceIcon
-                      externalUrl={aggregated[i.id].mIssue.external_url}
-                      seriesName={aggregated[i.id].mIssue.series_name}
-                      seriesStartYear={aggregated[i.id].mIssue.start_year}
-                      issueNumber={aggregated[i.id].mIssue.number}
-                      service={aggregated[i.id].mIssue.service}
-                    />
-                  }
-                </div>
+              <div>
+                {aggregated[i.id].cvIssue &&
+                  <ServiceIcon {...aggregated[i.id].cvIssue} />
+                }
+                {aggregated[i.id].gcdIssue &&
+                  <ServiceIcon {...aggregated[i.id].gcdIssue} />
+                }
+                {aggregated[i.id].cdbIssue &&
+                  <ServiceIcon {...aggregated[i.id].cdbIssue} />
+                }
+                {aggregated[i.id].mIssue &&
+                  <ServiceIcon {...aggregated[i.id].mIssue} />
+                }
+              </div>
               }
             </div>
           </td>
