@@ -9,7 +9,8 @@ const SeriesWithIssues = ({
   markedIssue,
   markToConnect,
   connect,
-  aggregated
+  aggregated,
+  removeAggregation
 }) => {
   return <div>
     <h4>{resource.publisher.name} / <u>{resource.name} ({resource.startYear})</u></h4>
@@ -19,20 +20,39 @@ const SeriesWithIssues = ({
         <tr key={i.id}>
           <td>
             <div>
-              <div
-                className={ 'btn btn-default btn-xs'}
-                style={{marginRight: '4px'}}
-                onClick={connect}
-              >
-                <i className="fa fa-plug"></i>
+              {!aggregated[i.id] &&
+              <div>
+                <div
+                  className={'btn btn-default btn-xs'}
+                  style={{marginRight: '4px'}}
+                  onClick={connect}
+                >
+                  <i className="fa fa-plug"></i>
+                </div>
+                <div
+                  className={'btn btn-' + connectIconClassName(i, markedIssue) + ' btn-xs'}
+                  style={{marginRight: '4px'}}
+                  onClick={() => {
+                    markToConnect(service, resource, i)
+                  }}
+                >
+                  <i className="fa fa-puzzle-piece"></i>
+                </div>
               </div>
-              <div
-                className={ 'btn btn-' + connectIconClassName(i, markedIssue) + ' btn-xs'}
-                style={{marginRight: '4px'}}
-                onClick={() => { markToConnect(service, resource, i) }}
-              >
-                <i className="fa fa-puzzle-piece"></i>
-              </div>
+              }
+              {aggregated[i.id] &&
+                <div>
+                  <div
+                    className={'btn btn-default btn-xs'}
+                    style={{marginRight: '4px'}}
+                    onClick={() => {
+                      removeAggregation(service, i)
+                    }}
+                  >
+                    <i className="fa fa-remove"></i>
+                  </div>
+                </div>
+              }
             </div>
 
             <br/>

@@ -49,6 +49,7 @@ class AggregationPage extends React.Component {
     this.selectSeries = this.selectSeries.bind(this);
     this.markToConnect = this.markToConnect.bind(this);
     this.connect = this.connect.bind(this);
+    this.removeAggregation = this.removeAggregation.bind(this);
   }
 
   componentDidMount() {
@@ -143,6 +144,44 @@ class AggregationPage extends React.Component {
     });
   };
 
+  removeAggregation = (service, issue) => {
+    let aggregatedSet = this.state.aggregatedSet;
+    const element = aggregatedSet.find((el) => {
+      if(!el[service + 'Issue']) { return }
+      return el[service + 'Issue'].id === issue.id
+    });
+
+    const cvAggregated = this.state.cvAggregated;
+    if(element.cvIssue) {
+      delete cvAggregated[element.cvIssue.id]
+    }
+
+    const gcdAggregated = this.state.gcdAggregated;
+    if(element.gcdIssue) {
+      delete gcdAggregated[element.gcdIssue.id]
+    }
+
+    const cdbAggregated = this.state.cdbAggregated;
+    if(element.cdbIssue) {
+      delete cdbAggregated[element.cdbIssue.id]
+    }
+
+    const mAggregated = this.state.mAggregated;
+    if(element.mIssue) {
+      delete mAggregated[element.mIssue.id]
+    }
+
+    aggregatedSet = aggregatedSet.filter(item => item !== element);
+
+    this.setState({
+      aggregatedSet: aggregatedSet,
+      cvAggregated: cvAggregated,
+      gcdAggregated: gcdAggregated,
+      cdbAggregated: cdbAggregated,
+      mAggregated: mAggregated
+    })
+  };
+
   render() {
     return (
       <Layout {...this.props}>
@@ -185,6 +224,7 @@ class AggregationPage extends React.Component {
                     markToConnect={this.markToConnect}
                     connect={this.connect}
                     aggregated={this.state.cvAggregated}
+                    removeAggregation={this.removeAggregation}
                   />
                 }
               </td>
@@ -204,6 +244,7 @@ class AggregationPage extends React.Component {
                     markToConnect={this.markToConnect}
                     connect={this.connect}
                     aggregated={this.state.gcdAggregated}
+                    removeAggregation={this.removeAggregation}
                   />
                 }
               </td>
@@ -223,6 +264,7 @@ class AggregationPage extends React.Component {
                     markToConnect={this.markToConnect}
                     connect={this.connect}
                     aggregated={this.state.cdbAggregated}
+                    removeAggregation={this.removeAggregation}
                   />
                 }
               </td>
@@ -242,6 +284,7 @@ class AggregationPage extends React.Component {
                     markToConnect={this.markToConnect}
                     connect={this.connect}
                     aggregated={this.state.mAggregated}
+                    removeAggregation={this.removeAggregation}
                   />
                 }
               </td>
