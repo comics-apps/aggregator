@@ -2,6 +2,7 @@ import React from 'react';
 import { withRouter } from 'next/router';
 import 'isomorphic-fetch';
 import isBlank from 'is-blank';
+import camelcaseKeys from 'camelcase-keys';
 
 import Layout from '../layouts/application';
 import {redirectIfLogged} from '../lib/auth';
@@ -66,6 +67,7 @@ class AggregationPage extends React.Component {
 
     fetch(process.env.API_URL + '/' + service + '/series?q=' + this.state.searchQuery)
       .then(res => res.json())
+      .then(json => camelcaseKeys(json))
       .then(json => {
         let newState = {};
         newState[service + 'Series'] = json;
@@ -77,6 +79,7 @@ class AggregationPage extends React.Component {
   selectSeries = (service, seriesId) => {
     fetch(process.env.API_URL + '/' + service + '/series/' + seriesId)
       .then(res => res.json())
+      .then(json => camelcaseKeys(json, { deep: true }))
       .then(json => {
         let newState = {};
         newState[service + 'Series'] = null;
@@ -88,8 +91,8 @@ class AggregationPage extends React.Component {
   markToConnect = (service, resource, issue) => {
     let newState = {};
     newState[service + 'MarkedIssue'] = {
-      series_name: resource.name,
-      start_year: resource.start_year,
+      seriesName: resource.name,
+      startYear: resource.startYear,
       service: resource.service,
       ...issue
     };

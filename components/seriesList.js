@@ -11,9 +11,9 @@ const SeriesList = ({
           <td>
             {s.publisher.name}
             <br/>
-            <a href={s.external_url} target="_blank">{s.name}</a>
+            <a href={s.externalUrl} target="_blank">{s.name}</a>
             <br/>
-            {s.start_year}
+            {s.startYear}
           </td>
           <td>
             <button

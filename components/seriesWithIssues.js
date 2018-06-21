@@ -1,7 +1,7 @@
 import isBlank from 'is-blank';
 
 import ServiceIcon from './serviceIcon';
-import {connectIconClassName, serviceIconPropsFromResource} from '../lib/aggregation';
+import {connectIconClassName} from '../lib/aggregation';
 
 const SeriesWithIssues = ({
   service,
@@ -12,7 +12,7 @@ const SeriesWithIssues = ({
   aggregated
 }) => {
   return <div>
-    <h4>{resource.publisher.name} / <u>{resource.name} ({resource.start_year})</u></h4>
+    <h4>{resource.publisher.name} / <u>{resource.name} ({resource.startYear})</u></h4>
     <table className="table table-striped">
       <tbody>
       {resource.issues.map((i) =>
@@ -47,9 +47,9 @@ const SeriesWithIssues = ({
 
               {!aggregated[i.id] &&
                 <ServiceIcon
-                  externalUrl={i.external_url}
+                  externalUrl={i.externalUrl}
                   seriesName={resource.name}
-                  seriesStartYear={resource.start_year}
+                  seriesStartYear={resource.startYear}
                   issueNumber={i.number}
                   service={resource.service}
                 />
