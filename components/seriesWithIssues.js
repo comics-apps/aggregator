@@ -10,7 +10,8 @@ const SeriesWithIssues = ({
   markToConnect,
   connect,
   aggregated,
-  removeAggregation
+  removeAggregation,
+  allowToAggregate
 }) => {
   return <div>
     <h4>{resource.publisher.name} / <u>{resource.name} ({resource.startYear})</u></h4>
@@ -22,6 +23,7 @@ const SeriesWithIssues = ({
             <div>
               {!aggregated[i.id] &&
               <div>
+                {markedIssue && markedIssue.id === i.id && allowToAggregate() &&
                 <div
                   className={'btn btn-default btn-xs'}
                   style={{marginRight: '4px'}}
@@ -29,6 +31,7 @@ const SeriesWithIssues = ({
                 >
                   <i className="fa fa-plug"></i>
                 </div>
+                }
                 <div
                   className={'btn btn-' + connectIconClassName(i, markedIssue) + ' btn-xs'}
                   style={{marginRight: '4px'}}

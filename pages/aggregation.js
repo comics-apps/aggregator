@@ -50,6 +50,7 @@ class AggregationPage extends React.Component {
     this.markToConnect = this.markToConnect.bind(this);
     this.connect = this.connect.bind(this);
     this.removeAggregation = this.removeAggregation.bind(this);
+    this.allowToAggregate = this.allowToAggregate.bind(this);
   }
 
   componentDidMount() {
@@ -182,6 +183,15 @@ class AggregationPage extends React.Component {
     })
   };
 
+  allowToAggregate = () => {
+    return [
+      this.state.cvMarkedIssue,
+      this.state.gcdMarkedIssue,
+      this.state.cdbMarkedIssue,
+      this.state.mMarkedIssue
+    ].filter(item => item !== null).length > 1
+  };
+
   render() {
     return (
       <Layout {...this.props}>
@@ -225,6 +235,7 @@ class AggregationPage extends React.Component {
                     connect={this.connect}
                     aggregated={this.state.cvAggregated}
                     removeAggregation={this.removeAggregation}
+                    allowToAggregate={this.allowToAggregate}
                   />
                 }
               </td>
@@ -245,6 +256,7 @@ class AggregationPage extends React.Component {
                     connect={this.connect}
                     aggregated={this.state.gcdAggregated}
                     removeAggregation={this.removeAggregation}
+                    allowToAggregate={this.allowToAggregate}
                   />
                 }
               </td>
@@ -265,6 +277,7 @@ class AggregationPage extends React.Component {
                     connect={this.connect}
                     aggregated={this.state.cdbAggregated}
                     removeAggregation={this.removeAggregation}
+                    allowToAggregate={this.allowToAggregate}
                   />
                 }
               </td>
@@ -285,6 +298,7 @@ class AggregationPage extends React.Component {
                     connect={this.connect}
                     aggregated={this.state.mAggregated}
                     removeAggregation={this.removeAggregation}
+                    allowToAggregate={this.allowToAggregate}
                   />
                 }
               </td>
