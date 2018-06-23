@@ -110,39 +110,49 @@ class AggregationPage extends React.Component {
     };
 
     const aggregatedSet = this.state.aggregatedSet;
-    aggregatedSet.push(el);
-
     const cvAggregated = this.state.cvAggregated;
-    if(el.cvIssue) {
-      cvAggregated[el.cvIssue.id] = el
-    }
-
     const gcdAggregated = this.state.gcdAggregated;
-    if(el.gcdIssue) {
-      gcdAggregated[el.gcdIssue.id] = el
-    }
-
     const cdbAggregated = this.state.cdbAggregated;
-    if(el.cdbIssue) {
-      cdbAggregated[el.cdbIssue.id] = el
-    }
-
     const mAggregated = this.state.mAggregated;
-    if(el.mIssue) {
-      mAggregated[el.mIssue.id] = el
-    }
+    const _this = this;
 
-    this.setState({
-      cvMarkedIssue: null,
-      gcdMarkedIssue: null,
-      cdbMarkedIssue: null,
-      mMarkedIssue: null,
-      aggregatedSet: aggregatedSet,
-      cvAggregated: cvAggregated,
-      gcdAggregated: gcdAggregated,
-      cdbAggregated: cdbAggregated,
-      mAggregated: mAggregated
-    });
+    const body = {
+      cv_id: el.cvIssue.id,
+      gcd_id: el.gcdIssue.id,
+      cdb_id: el.cdbIssue.id,
+      m_id: el.mIssue.id
+    };
+    const queryString = Object.keys(body).map(key => key + '=' + body[key]).join('&');
+    fetch(process.env.API_URL + '/aggregates', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json, application/xml, text/play, text/html, *.*',
+        'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
+      },
+      body: queryString
+    })
+      .then(res => res.json())
+      .then(json => {
+        el.id = json.id;
+        aggregatedSet.push(el);
+
+        if(el.cvIssue)  { cvAggregated[el.cvIssue.id] = el}
+        if(el.gcdIssue) { gcdAggregated[el.gcdIssue.id] = el }
+        if(el.cdbIssue) { cdbAggregated[el.cdbIssue.id] = el }
+        if(el.mIssue)   { mAggregated[el.mIssue.id] = el }
+
+        _this.setState({
+          cvMarkedIssue: null,
+          gcdMarkedIssue: null,
+          cdbMarkedIssue: null,
+          mMarkedIssue: null,
+          aggregatedSet: aggregatedSet,
+          cvAggregated: cvAggregated,
+          gcdAggregated: gcdAggregated,
+          cdbAggregated: cdbAggregated,
+          mAggregated: mAggregated
+        });
+      });
   };
 
   removeAggregation = (service, issue) => {
@@ -180,6 +190,10 @@ class AggregationPage extends React.Component {
       gcdAggregated: gcdAggregated,
       cdbAggregated: cdbAggregated,
       mAggregated: mAggregated
+    });
+
+    fetch(process.env.API_URL + '/aggregates/' + element.id, {
+      method: 'DELETE'
     })
   };
 
