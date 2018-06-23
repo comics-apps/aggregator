@@ -74,16 +74,16 @@ const SeriesWithIssues = ({
               {aggregated[i.id] &&
               <div>
                 {aggregated[i.id].cvIssue &&
-                  <ServiceIcon {...aggregated[i.id].cvIssue} />
+                  <ServiceIcon seriesName={resource.name} startYear={resource.startYear} {...aggregated[i.id].cvIssue} />
                 }
                 {aggregated[i.id].gcdIssue &&
-                  <ServiceIcon {...aggregated[i.id].gcdIssue} />
+                  <ServiceIcon seriesName={resource.name} startYear={resource.startYear} {...aggregated[i.id].gcdIssue} />
                 }
                 {aggregated[i.id].cdbIssue &&
-                  <ServiceIcon {...aggregated[i.id].cdbIssue} />
+                  <ServiceIcon seriesName={resource.name} startYear={resource.startYear} {...aggregated[i.id].cdbIssue} />
                 }
                 {aggregated[i.id].mIssue &&
-                  <ServiceIcon {...aggregated[i.id].mIssue} />
+                  <ServiceIcon seriesName={resource.name} startYear={resource.startYear} {...aggregated[i.id].mIssue} />
                 }
               </div>
               }

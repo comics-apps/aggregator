@@ -3,6 +3,7 @@ import { withRouter } from 'next/router';
 import 'isomorphic-fetch';
 import isBlank from 'is-blank';
 import camelcaseKeys from 'camelcase-keys';
+import chunks from 'array.chunk';
 
 import Layout from '../layouts/application';
 import {redirectIfLogged} from '../lib/auth';
@@ -86,15 +87,53 @@ class AggregationPage extends React.Component {
         let newState = {};
         newState[service + 'Series'] = null;
         newState[service + 'Resource'] = json;
-        this.setState(newState)
+        this.setState(newState);
+
+        const ids = json.issues.map(issue => issue.id);
+        const groups = chunks(ids, 100);
+
+        groups.map(group => {
+          fetch(process.env.API_URL + '/aggregates?filter[service]=' + service + '&filter[ids]=' + group.join(','))
+            .then(res => res.json())
+            .then(json => camelcaseKeys(json, { deep: true }))
+            .then(json => {
+              const aggregatedSet = this.state.aggregatedSet;
+              const cvAggregated = this.state.cvAggregated;
+              const gcdAggregated = this.state.gcdAggregated;
+              const cdbAggregated = this.state.cdbAggregated;
+              const mAggregated = this.state.mAggregated;
+
+              json.map(item => {
+                const el = {
+                  cvIssue: item.cvIssue,
+                  gcdIssue: item.gcdIssue,
+                  cdbIssue: item.cdbIssue,
+                  mIssue: item.mIssue,
+                  id: item.id
+                };
+
+                aggregatedSet.push(el);
+                cvAggregated[el.cvIssue.id] = el;
+                gcdAggregated[el.gcdIssue.id] = el;
+                cdbAggregated[el.cdbIssue.id] = el;
+                mAggregated[el.mIssue.id] = el;
+              });
+
+              this.setState({
+                aggregatedSet: aggregatedSet,
+                cvAggregated: cvAggregated,
+                gcdAggregated: gcdAggregated,
+                cdbAggregated: cdbAggregated,
+                mAggregated: mAggregated
+              });
+            });
+        })
       });
   };
 
   markToConnect = (service, resource, issue) => {
     let newState = {};
     newState[service + 'MarkedIssue'] = {
-      seriesName: resource.name,
-      startYear: resource.startYear,
       service: resource.service,
       ...issue
     };
