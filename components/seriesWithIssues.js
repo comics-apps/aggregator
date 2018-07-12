@@ -19,19 +19,10 @@ const SeriesWithIssues = ({
       <tbody>
       {resource.issues.map((i) =>
         <tr key={i.id}>
-          <td>
+          <td style={{height: "150px" }}>
             <div>
               {!aggregated[i.id] &&
               <div>
-                {markedIssue && markedIssue.id === i.id && allowToAggregate() &&
-                <div
-                  className={'btn btn-default btn-xs'}
-                  style={{marginRight: '4px'}}
-                  onClick={connect}
-                >
-                  <i className="fa fa-plug"></i>
-                </div>
-                }
                 <div
                   className={'btn btn-' + connectIconClassName(i, markedIssue) + ' btn-xs'}
                   style={{marginRight: '4px'}}
@@ -41,12 +32,19 @@ const SeriesWithIssues = ({
                 >
                   <i className="fa fa-puzzle-piece"></i>
                 </div>
+                <div
+                  className={'btn btn-success btn-xs' + (markedIssue && markedIssue.id === i.id && allowToAggregate() ? '' : ' disabled')}
+                  style={{marginRight: '4px'}}
+                  onClick={connect}
+                >
+                  <i className="fa fa-plug"></i>
+                </div>
               </div>
               }
               {aggregated[i.id] &&
                 <div>
                   <div
-                    className={'btn btn-default btn-xs'}
+                    className={'btn btn-danger btn-xs'}
                     style={{marginRight: '4px'}}
                     onClick={() => {
                       removeAggregation(service, i)

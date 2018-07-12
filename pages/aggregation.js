@@ -113,10 +113,10 @@ class AggregationPage extends React.Component {
                 };
 
                 aggregatedSet.push(el);
-                cvAggregated[el.cvIssue.id] = el;
-                gcdAggregated[el.gcdIssue.id] = el;
-                cdbAggregated[el.cdbIssue.id] = el;
-                mAggregated[el.mIssue.id] = el;
+                if(el.cvIssue) { cvAggregated[el.cvIssue.id] = el }
+                if(el.gcdIssue) { gcdAggregated[el.gcdIssue.id] = el }
+                if(el.cdbIssue) { cdbAggregated[el.cdbIssue.id] = el }
+                if(el.mIssue) { mAggregated[el.mIssue.id] = el }
               });
 
               this.setState({
@@ -155,12 +155,13 @@ class AggregationPage extends React.Component {
     const mAggregated = this.state.mAggregated;
     const _this = this;
 
-    const body = {
-      cv_id: el.cvIssue.id,
-      gcd_id: el.gcdIssue.id,
-      cdb_id: el.cdbIssue.id,
-      m_id: el.mIssue.id
-    };
+    let body = {};
+
+    if(el.cvIssue) { body.cv_id = el.cvIssue.id }
+    if(el.gcdIssue) { body.gcd_id = el.gcdIssue.id }
+    if(el.cdbIssue) { body.cdb_id = el.cdbIssue.id }
+    if(el.mIssue) { body.m_id = el.mIssue.id }
+
     const queryString = Object.keys(body).map(key => key + '=' + body[key]).join('&');
     fetch(process.env.API_URL + '/aggregates', {
       method: 'POST',
